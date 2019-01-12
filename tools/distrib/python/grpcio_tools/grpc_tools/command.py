@@ -33,6 +33,7 @@ def build_package_protos(package_root):
     well_known_protos_include = pkg_resources.resource_filename(
         'grpc_tools', '_proto')
 
+    command_failure = False
     for proto_file in proto_files:
         command = [
             'grpc_tools.protoc',
@@ -43,6 +44,10 @@ def build_package_protos(package_root):
         ] + [proto_file]
         if protoc.main(command) != 0:
             sys.stderr.write('warning: {} failed'.format(command))
+            command_failure = True
+
+    if command_failure:
+        raise Exception
 
 
 class BuildPackageProtos(setuptools.Command):
